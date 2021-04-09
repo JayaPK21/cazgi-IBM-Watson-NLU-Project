@@ -48,14 +48,23 @@ class App extends React.Component {
 
       //Include code here to check the sentiment and fomrat the data accordingly
 
-      this.setState({sentimentOutput:response.data});
-      let output = response.data;
-      if(response.data === "positive") {
-        output = <div style={{color:"green",fontSize:20}}>{response.data}</div>
-      } else if (response.data === "negative"){
-        output = <div style={{color:"red",fontSize:20}}>{response.data}</div>
+      
+      let output = response.data.result;
+      let sentimentLabel;
+    
+      if(output.sentiment!=null){
+            sentimentLabel = output.sentiment.document.label;
+      }else if(output.entities[0]!=null){
+          sentimentLabel = output.entities[0].sentiment.label;
+      }else{
+          sentimentLabel = output.keywords[0].sentiment.label;
+      }
+      if(sentimentLabel === "positive") {
+        output = <div style={{color:"green",fontSize:20}}>The Sentiment for given text or url is: {sentimentLabel}</div>
+      } else if (sentimentLabel === "negative"){
+        output = <div style={{color:"red",fontSize:20}}>The Sentiment for given text or url is: {sentimentLabel}</div>
       } else {
-        output = <div style={{color:"orange",fontSize:20}}>{response.data}</div>
+        output = <div style={{color:"yellow",fontSize:20}}>The Sentiment for given text or url is: {sentimentLabel}</div>
       }
       this.setState({sentimentOutput:output});
     });
@@ -73,8 +82,17 @@ class App extends React.Component {
     ret = axios.get(url);
 
     ret.then((response)=>{
-      this.setState({sentimentOutput:<EmotionTable emotions={response.data}/>});
-  });
+        let output = response.data.result;
+        if(output.emotion != null){
+            this.setState({sentimentOutput:<EmotionTable emotions={output.emotion.document.emotion}/>});
+        }
+        else if(output.entities[0] != null){
+            this.setState({sentimentOutput:<EmotionTable emotions={output.entities[0].emotion}/>});
+        }else{
+            this.setState({sentimentOutput:<EmotionTable emotions={output.keywords[0].emotion}/>});
+        }
+      
+    })
   }
   
 

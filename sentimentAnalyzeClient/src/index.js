@@ -10,6 +10,7 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 );
+document.title="Sentiment Analyzer";
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
